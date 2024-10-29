@@ -46,15 +46,15 @@ $commonCollections = [
                 'filters' => [],
             ],
             [
-                '$id' => ID::custom('mimeType'),
+                '$id' => ID::custom('headers'),
                 'type' => Database::VAR_STRING,
                 'format' => '',
-                'size' => 255, // https://tools.ietf.org/html/rfc4288#section-4.2
+                'size' => 16384,
                 'signed' => true,
                 'required' => false,
-                'default' => null,
+                'default' => [],
                 'array' => false,
-                'filters' => [],
+                'filters' => ['json'],
             ],
             [
                 '$id' => 'accessedAt',
