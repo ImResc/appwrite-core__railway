@@ -161,9 +161,6 @@ class UsageDump extends Action
 
                 $value = $collectionSizeCache[$collectionId];
                 $diff = $value - $previousValue;
-
-                Console::info('[' . DateTime::now() . '] Collection: ' . $collectionId . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
-
                 if ($diff === 0) {
                     break;
                 }
@@ -218,9 +215,6 @@ class UsageDump extends Action
                 }
 
                 $diff = $value - $previousValue;
-
-                Console::info('[' . DateTime::now() . '] Database: ' . $databaseId . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
-
                 if ($diff === 0) {
                     break;
                 }
@@ -286,13 +280,6 @@ class UsageDump extends Action
                 }
 
                 $diff = $value - $previousValue;
-
-                $project = $dbForProject->getSharedTables()
-                    ? $dbForProject->getTenant()
-                    : $dbForProject->getNamespace();
-
-                Console::info('[' . DateTime::now() . '] Project: ' . $project . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
-
                 if ($diff === 0) {
                     break;
                 }
