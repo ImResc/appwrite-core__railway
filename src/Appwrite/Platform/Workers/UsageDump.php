@@ -69,7 +69,7 @@ class UsageDump extends Action
                 $databaseCache = [];
                 $collectionSizeCache = [];
 
-                Console::log('['.DateTime::now().'] Id: '.$project->getId(). ' InternalId: '.$project->getInternalId(). ' Db: '.$project->getAttribute('database').' ReceivedAt: '.$receivedAt. ' Keys: '.$numberOfKeys . ' Started');
+                Console::log('[' . DateTime::now() . '] Id: ' . $project->getId() . ' InternalId: ' . $project->getInternalId() . ' Db: ' . $project->getAttribute('database') . ' ReceivedAt: ' . $receivedAt . ' Keys: ' . $numberOfKeys . ' Started');
                 $start = \microtime(true);
 
                 foreach ($stats['keys'] ?? [] as $key => $value) {
@@ -95,25 +95,25 @@ class UsageDump extends Action
                             continue;
                         }
 
-                        $projectDocuments[] = new Document([
-                            '$id' => $id,
-                            'period' => $period,
-                            'time' => $time,
-                            'metric' => $key,
-                            'value' => $value,
-                            'region' => System::getEnv('_APP_REGION', 'default'),
-                        ]);
+                        $this->addDocumentToBatch(
+                            $projectDocuments,
+                            $id,
+                            $period,
+                            $time,
+                            $key,
+                            $value
+                        );
                     }
                 }
 
                 $dbForProject->createOrUpdateDocumentsWithIncrease(
                     collection: 'stats',
                     attribute: 'value',
-                    documents: $projectDocuments
+                    documents: \array_values($projectDocuments)
                 );
 
                 $end = \microtime(true);
-                Console::log('['.DateTime::now().'] Id: '.$project->getId(). ' InternalId: '.$project->getInternalId(). ' Db: '.$project->getAttribute('database').' ReceivedAt: '.$receivedAt. ' Keys: '.$numberOfKeys. ' Time: '.($end - $start).'s');
+                Console::log('[' . DateTime::now() . '] Id: ' . $project->getId() . ' InternalId: ' . $project->getInternalId() . ' Db: ' . $project->getAttribute('database') . ' ReceivedAt: ' . $receivedAt . ' Keys: ' . $numberOfKeys . ' Time: ' . ($end - $start) . 's');
             }
         } catch (\Exception $e) {
             Console::error('[' . DateTime::now() . '] Error processing stats: ' . $e->getMessage());
@@ -162,7 +162,7 @@ class UsageDump extends Action
                 $value = $collectionSizeCache[$collectionId];
                 $diff = $value - $previousValue;
 
-                Console::info('['.DateTime::now().'] Collection: '.$collectionId. ' Value: '.$value. ' PreviousValue: '.$previousValue. ' Diff: '.$diff);
+                Console::info('[' . DateTime::now() . '] Collection: ' . $collectionId . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
 
                 if ($diff === 0) {
                     break;
@@ -175,7 +175,14 @@ class UsageDump extends Action
                 ];
 
                 foreach ($keys as $metric) {
-                    $projectDocuments[] = $this->createStatsDocument($id, $period, $time, $metric, $diff);
+                    $this->addDocumentToBatch(
+                        $projectDocuments,
+                        $id,
+                        $period,
+                        $time,
+                        $metric,
+                        $diff
+                    );
                 }
                 break;
 
@@ -212,7 +219,7 @@ class UsageDump extends Action
 
                 $diff = $value - $previousValue;
 
-                Console::info('['.DateTime::now().'] Database: '.$databaseId. ' Value: '.$value. ' PreviousValue: '.$previousValue. ' Diff: '.$diff);
+                Console::info('[' . DateTime::now() . '] Database: ' . $databaseId . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
 
                 if ($diff === 0) {
                     break;
@@ -224,7 +231,14 @@ class UsageDump extends Action
                 ];
 
                 foreach ($keys as $metric) {
-                    $projectDocuments[] = $this->createStatsDocument($id, $period, $time, $metric, $diff);
+                    $this->addDocumentToBatch(
+                        $projectDocuments,
+                        $id,
+                        $period,
+                        $time,
+                        $metric,
+                        $diff
+                    );
                 }
                 break;
 
@@ -277,7 +291,7 @@ class UsageDump extends Action
                     ? $dbForProject->getTenant()
                     : $dbForProject->getNamespace();
 
-                Console::info('['.DateTime::now().'] Project: '. $project . ' Value: '.$value. ' PreviousValue: '.$previousValue. ' Diff: '.$diff);
+                Console::info('[' . DateTime::now() . '] Project: ' . $project . ' Value: ' . $value . ' PreviousValue: ' . $previousValue . ' Diff: ' . $diff);
 
                 if ($diff === 0) {
                     break;
@@ -288,27 +302,55 @@ class UsageDump extends Action
                 ];
 
                 foreach ($keys as $metric) {
-                    $projectDocuments[] = $this->createStatsDocument($id, $period, $time, $metric, $diff);
+                    $this->addDocumentToBatch(
+                        $projectDocuments,
+                        $id,
+                        $period,
+                        $time,
+                        $metric,
+                        $diff
+                    );
                 }
 
                 break;
         }
     }
 
-    private function createStatsDocument(
+    /**
+     * Aggregates project documents so we don't push duplicates.
+     *
+     * @param array<string, Document> $projectDocuments
+     * @param string $id
+     * @param string $period
+     * @param ?string $time
+     * @param string $metric
+     * @param int $value
+     * @return void
+     * @throws \Utopia\Database\Exception
+     */
+    private function addDocumentToBatch(
+        array &$projectDocuments,
         string $id,
         string $period,
         ?string $time,
-        string $key,
-        int $diff,
-    ): Document {
-        return new Document([
-            '$id' => $id,
-            'period' => $period,
-            'time' => $time,
-            'metric' => $key,
-            'value' => $diff,
-            'region' => System::getEnv('_APP_REGION', 'default'),
-        ]);
+        string $metric,
+        int $value
+    ): void {
+        $aggregateKey = "{$id}.{$period}.{$time}.{$metric}";
+
+        if (!isset($projectDocuments[$aggregateKey])) {
+            $projectDocuments[$aggregateKey] = new Document([
+                '$id' => $id,
+                'period' => $period,
+                'time' => $time,
+                'metric' => $metric,
+                'value' => $value,
+                'region' => System::getEnv('_APP_REGION', 'default'),
+            ]);
+        } else {
+            $document = $projectDocuments[$aggregateKey];
+            $current = $document->getAttribute('value', 0);
+            $document->setAttribute('value', $current + $value);
+        }
     }
 }
