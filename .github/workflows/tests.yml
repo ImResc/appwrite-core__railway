@@ -125,7 +125,8 @@ jobs:
             Webhooks,
             VCS,
             Messaging,
-            Migrations
+            Migrations,
+            Tokens
           ]
         tables-mode: [
           'Project',
