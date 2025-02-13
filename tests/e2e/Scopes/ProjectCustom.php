@@ -49,6 +49,11 @@ trait ProjectCustom
             'url' => 'https://appwrite.io',
         ]);
 
+        if($project['headers']['status-code'] != 201){
+            var_dump($project['headers']['status-code']);
+            var_dump($project);
+        }
+
         $this->assertEquals(201, $project['headers']['status-code']);
         $this->assertNotEmpty($project['body']);
 
