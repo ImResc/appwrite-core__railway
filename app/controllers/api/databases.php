@@ -278,6 +278,7 @@ function updateAttribute(
         throw new Exception(Exception::ATTRIBUTE_TYPE_INVALID);
     }
 
+    $required ??= $attribute->getAttribute('required');
     if ($required && isset($default)) {
         throw new Exception(Exception::ATTRIBUTE_DEFAULT_UNSUPPORTED, 'Cannot set default value for required attribute');
     }
@@ -288,7 +289,6 @@ function updateAttribute(
 
     $collectionId =  'database_' . $db->getInternalId() . '_collection_' . $collection->getInternalId();
 
-    $required ??= $attribute->getAttribute('required');
     $attribute
         ->setAttribute('default', $default)
         ->setAttribute('required', $required);
