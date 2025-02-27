@@ -1726,6 +1726,17 @@ class DatabasesCustomServerTest extends Scope
         $this->assertFalse($new['body']['required']);
         $this->assertEquals('ipsum', $new['body']['default']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/string/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => 'ipsum'
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -1759,17 +1770,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/string/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => 'ipsum'
         ]);
 
         $this->assertEquals(400, $update['headers']['status-code']);
@@ -2011,6 +2011,17 @@ class DatabasesCustomServerTest extends Scope
         $this->assertFalse($new['body']['required']);
         $this->assertEquals('192.168.0.1', $new['body']['default']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/ip/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => '127.0.0.1'
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2044,17 +2055,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/ip/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => '127.0.0.1'
         ]);
 
         $this->assertEquals(400, $update['headers']['status-code']);
@@ -2153,6 +2153,17 @@ class DatabasesCustomServerTest extends Scope
         $this->assertFalse($new['body']['required']);
         $this->assertEquals('https://appwrite.io', $new['body']['default']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/url/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => 'https://appwrite.io'
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2186,17 +2197,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/url/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => 'https://appwrite.io'
         ]);
 
         $this->assertEquals(400, $update['headers']['status-code']);
@@ -2309,6 +2309,43 @@ class DatabasesCustomServerTest extends Scope
         $this->assertEquals(100, $new['body']['min']);
         $this->assertEquals(2000, $new['body']['max']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'required' => false,
+            'default' => 100,
+            'min' => 0,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'required' => false,
+            'default' => 10,
+            'max' => 100,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => 50,
+            'min' => 0,
+            'max' => 100,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2374,45 +2411,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => false,
-            'default' => 100,
-            'min' => 0,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'required' => false,
-            'default' => 100,
-            'max' => 0,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'required' => false,
-            'min' => 0,
-            'max' => 100,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/integer/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => 50,
             'min' => 0,
             'max' => 100,
         ]);
@@ -2572,6 +2570,43 @@ class DatabasesCustomServerTest extends Scope
         $this->assertEquals(123.456, $new['body']['min']);
         $this->assertEquals(2000, $new['body']['max']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'required' => false,
+            'default' => 123.456,
+            'min' => 0.0,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'required' => false,
+            'default' => 23.456,
+            'max' => 100.0,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => 23.456,
+            'min' => 0.0,
+            'max' => 100.0,
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2637,45 +2672,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => false,
-            'default' => 123.456,
-            'min' => 0.0,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'required' => false,
-            'default' => 123.456,
-            'max' => 0.0,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'required' => false,
-            'min' => 0.0,
-            'max' => 100.0,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/float/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => 123.456,
             'min' => 0.0,
             'max' => 100.0,
         ]);
@@ -2821,6 +2817,17 @@ class DatabasesCustomServerTest extends Scope
         $this->assertFalse($new['body']['required']);
         $this->assertEquals(false, $new['body']['default']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/boolean/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => true
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertEquals(false, $update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2854,17 +2861,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/boolean/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => false
         ]);
 
         $this->assertEquals(400, $update['headers']['status-code']);
@@ -2963,6 +2959,17 @@ class DatabasesCustomServerTest extends Scope
         $this->assertFalse($new['body']['required']);
         $this->assertEquals('1965-06-12 14:12:55+02:00', $new['body']['default']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/datetime/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => '1975-06-12 14:12:55+02:00'
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -2996,17 +3003,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/datetime/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => '1975-06-12 14:12:55+02:00'
         ]);
 
         $this->assertEquals(400, $update['headers']['status-code']);
@@ -3123,6 +3119,18 @@ class DatabasesCustomServerTest extends Scope
         $this->assertContains('ipsum', $new['body']['elements']);
         $this->assertContains('dolor', $new['body']['elements']);
 
+        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/enum/' . $key, array_merge([
+            'content-type' => 'application/json',
+            'x-appwrite-project' => $this->getProject()['$id'],
+            'x-appwrite-key' => $this->getProject()['apiKey']
+        ]), [
+            'default' => 'lorem',
+            'elements' => ['lorem', 'ipsum', 'dolor'],
+        ]);
+
+        $this->assertEquals(200, $update['headers']['status-code']);
+        $this->assertFalse($update['body']['required']);
+
         /**
          * Test against failure
          */
@@ -3209,18 +3217,6 @@ class DatabasesCustomServerTest extends Scope
             'x-appwrite-key' => $this->getProject()['apiKey']
         ]), [
             'required' => true,
-            'elements' => ['lorem', 'ipsum', 'dolor'],
-        ]);
-
-        $this->assertEquals(400, $update['headers']['status-code']);
-        $this->assertEquals(AppwriteException::GENERAL_ARGUMENT_INVALID, $update['body']['type']);
-
-        $update = $this->client->call(Client::METHOD_PATCH, '/databases/' . $databaseId . '/collections/' . $collectionId . '/attributes/enum/' . $key, array_merge([
-            'content-type' => 'application/json',
-            'x-appwrite-project' => $this->getProject()['$id'],
-            'x-appwrite-key' => $this->getProject()['apiKey']
-        ]), [
-            'default' => 'lorem',
             'elements' => ['lorem', 'ipsum', 'dolor'],
         ]);
 
