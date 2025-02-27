@@ -240,7 +240,7 @@ function updateAttribute(
     string $type,
     int $size = null,
     string $filter = null,
-    string|bool|int|float|null $default = null,
+    string|bool|int|float $default = null,
     bool|null $required = null,
     int|float|null $min = null,
     int|float|null $max = null,
