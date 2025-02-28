@@ -113,6 +113,18 @@ abstract class Format
     protected function getEnumName(string $service, string $method, string $param): ?string
     {
         switch ($service) {
+            case 'console':
+                switch ($method) {
+                    case 'getResource':
+                        switch ($param) {
+                            case 'type':
+                                return 'ConsoleResourceType';
+                            case 'value':
+                                return 'ConsoleResourceValue';
+                        }
+                        break;
+                }
+                break;
             case 'account':
                 switch ($method) {
                     case 'createOAuth2Session':
@@ -194,6 +206,17 @@ abstract class Format
                         switch ($param) {
                             case 'method':
                                 return 'ExecutionMethod';
+                        }
+                        break;
+                }
+                break;
+            case 'sites':
+                switch ($method) {
+                    case 'getUsage':
+                    case 'listUsage':
+                        switch ($param) {
+                            case 'range':
+                                return 'SiteUsageRange';
                         }
                         break;
                 }
@@ -384,6 +407,14 @@ abstract class Format
                 switch ($method) {
                     case 'getUsage':
                     case 'getFunctionUsage':
+                        // Range Enum Keys
+                        return ['Twenty Four Hours', 'Thirty Days', 'Ninety Days'];
+                }
+                break;
+            case 'sites':
+                switch ($method) {
+                    case 'getUsage':
+                    case 'getSiteUsage':
                         // Range Enum Keys
                         return ['Twenty Four Hours', 'Thirty Days', 'Ninety Days'];
                 }
