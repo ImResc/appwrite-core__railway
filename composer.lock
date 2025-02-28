@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6883b3e81cfb0c5355997def668d5df2",
+    "content-hash": "6d3952c126526006ed5a7d5a4741b755",
     "packages": [
         {
             "name": "adhocore/jwt",
@@ -3770,6 +3770,69 @@
                 "source": "https://github.com/utopia-php/database/tree/0.59.0"
             },
             "time": "2025-02-12T08:08:29+00:00"
+        },
+        {
+            "name": "utopia-php/detector",
+            "version": "dev-feat-pseudocode-draft2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/utopia-php/detector.git",
+                "reference": "69958f4d765c5338a703f3e3638a3249ec227be8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/utopia-php/detector/zipball/69958f4d765c5338a703f3e3638a3249ec227be8",
+                "reference": "69958f4d765c5338a703f3e3638a3249ec227be8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "laravel/pint": "1.2.*",
+                "phpstan/phpstan": "1.8.*",
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Utopia\\Detector\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Utopia\\Tests\\": "tests/Detector/"
+                }
+            },
+            "scripts": {
+                "lint": [
+                    "./vendor/bin/pint --test --config pint.json"
+                ],
+                "format": [
+                    "./vendor/bin/pint --config pint.json"
+                ],
+                "check": [
+                    "./vendor/bin/phpstan analyse --level 8 -c phpstan.neon src tests"
+                ],
+                "test": [
+                    "./vendor/bin/phpunit --configuration phpunit.xml --debug"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A simple library for fast and reliable environment identification.",
+            "keywords": [
+                "detector",
+                "framework",
+                "php",
+                "utopia"
+            ],
+            "support": {
+                "source": "https://github.com/utopia-php/detector/tree/feat-pseudocode-draft2",
+                "issues": "https://github.com/utopia-php/detector/issues"
+            },
+            "time": "2025-02-18T15:22:56+00:00"
         },
         {
             "name": "utopia-php/domains",
@@ -8804,9 +8867,18 @@
             "time": "2024-03-07T20:33:40+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "utopia-php/detector",
+            "version": "dev-feat-pseudocode-draft2",
+            "alias": "0.1.99",
+            "alias_normalized": "0.1.99.0"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "utopia-php/detector": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -8830,5 +8902,5 @@
     "platform-overrides": {
         "php": "8.3"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
